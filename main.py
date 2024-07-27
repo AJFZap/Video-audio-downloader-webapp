@@ -24,7 +24,14 @@ def get_video_data(link):
     return {'title': title, 'channel': channel, 'channel_url': channel_url, 'thumbnail': thumbnail, 'views': views, 'length': length}
 
 def get_video_file(link):
-    pass
+    yt = YouTube(link)
+    audioFile = yt.streams.first()
+    outFile = audioFile.download(output_path='static/media')
+    # Make the new audio file
+    base, ext = os.path.splitext(outFile)
+    newFile = base.strip() + '.mp4'
+    os.rename(outFile, newFile)
+    return newFile
 
 def get_audio_file(link):
     yt = YouTube(link)
@@ -41,22 +48,33 @@ def download_video():
     if request.method == 'POST':
         try:
             print(request)
-            # data = json.loads(request.body)
-            # videoLink = data['link']
-            print("Yep, There is a link " + videoLink)
+            data = request.get_json()
+            videoLink = data.get('link')
 
         except(KeyError, json.JSONDecodeError):
-            return {'error': 'Invalid data sent'}
+            return jsonify({'error': 'Invalid data sent'}), 400
         
-        # Gets the video title if it has one.
-        title = get_video_data(videoLink)
-        print("Yep, this is a title: " + title)
+        try:
+            # Gets the video title if it has one.
+            videoData = get_video_data(videoLink)
+            videoFile = get_video_file(videoLink)
 
-        # Send the result to JS so the user can see it.
-        return {'script-content': transcription.strip(), 'summary': cohere_content}
+            # Send the result to JS so the user can see it.
+            file_name = os.path.basename(videoFile)
+            file_path = os.path.join("static/media/", file_name)
+
+            response_data = {
+                    'file_name': file_name,
+                    'video_data': videoData
+                }
+
+            return jsonify(response_data), 200
+        
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
 
     else:
-        return {'error': 'Invalid request method'}
+        return jsonify({'error': 'Invalid request method'}), 500
 
 @app.route('/audio', methods=['POST'])
 def download_audio():
