@@ -45,3 +45,11 @@
 .video-info {
     flex-grow: 1;
 }
+
+#video-title, #video-channel {
+    transition: color 0.3s ease;
+}
+
+#video-title:hover, #video-channel:hover {
+    color: #b90bdb; /* Color to highlight on hover */
+}
