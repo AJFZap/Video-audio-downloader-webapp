@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}"> <!-- By icons8.com -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <title>Youtube Downloader</title>
+</head>
+<body class="flex flex-col min-h-screen bg-gray-300 font-sans antialised">
+    <!-- Navbar -->
+    <nav class="bg-red-800 p-4 text-white flex justify-between">
+        <div>
+            <h1 class="text-3xl font-bold">YT Downloader</h1>
+        </div>
+    </nav>
+
+    <br></bodybr>
+
+    <!-- IN CASE THE USER HAS NOT BEEN VERIFIED OR IT HAS BEEN -->
+    {% for msg in messages %}
+    <div class="flex items-center justify-center">
+        {% if msg.tags == 'success' %}
+            <div class="flex-col container max-w-md mt-1 bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md" role="alert">
+                <div class="flex">
+                <div class="py-1"><svg class="fill-current h-6 w-6 text-teal-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"/></svg></div>
+                <div>
+                    <p class="font-bold">Verify your account</p>
+                    <p class="text-sm">{{msg}}</p>
+                </div>
+                </div>
+            </div>
+        {% elif msg.tags == 'error' %}
+            <div class="flex-col container max-w-md mt-1 px-2 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <strong class="font-bold">Something went wrong!</strong>
+                <span class="block sm:inline">{{msg}}</span>
+                <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                </span>
+            </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    <!-- Main -->
+    <div class="flex-grow container mx-auto mt-10 px-4 sm:px-0">
+        <div class="max-w-3xl mx-auto bg-white p-10 rounded-lg shadow-md transition-transform transform hover:scale-105 flex flex-col">
+            <div class="text-center">
+                <h2 class="text-2xl font-semibold mb-4 py-2">
+                    Welcome to Youtube video downloader
+                </h2>
+                <p class="text-gray-700">
+                    Paste a link from a video down below and click on the button with the desired action!
+                </p>
+            </div>
+
+            <br>
+
+            <!-- Video Stream -->
+            <div class="text-center">
+                <h2 class="text-xl mb-4 font-semibold">
+                    Enter your link here!
+                </h2>
+                <div class="flex space-x-4">
+                    <input type="text" id="streamlink" type="url" placeholder="Paste your link in here, please" class="flex-grow p-2 border border-red-300 rounded-md">
+                </div>
+                <button id="downloadvideobutton" class="bg-red-600 text-white px-4 py-2 rounded-md mt-5 hover:bg-red-800 transition-colors">
+                    Download Video!
+                </button>
+                <button id="downloadaudiobutton" class="bg-red-600 text-white px-4 py-2 rounded-md mt-5 hover:bg-red-800 transition-colors">
+                    Download Audio!
+                </button>
+            </div>
+
+            <!-- Loading Script -->
+            <div id="loading-ring" style="display: none;" class="load">
+                
+            </div>
+
+            <!-- Video Data -->
+            <div class="mt-10 flex-grow" id="video-data" style="display: none;">
+                <hr class="my-4 border-red-300">
+                <div class="flex items-start space-x-4">
+                    <img id="video-thumbnail" src="" alt="Video Thumbnail" class="w-48 h-auto">
+                    <div class="video-info">
+                        <a id="video-title" href="" target="_blank" class="text-xl mb-2 font-semibold"></a>
+                        <hr class="my-2 border-red-300">
+                        <a href="" target="_blank" id="video-channel" class="mt-2 text-blue-700"></a>
+                        <p id="video-length" class="mt-2 text-gray-700"></p>
+                        <p id="video-views" class="mt-2 text-gray-700"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br></bodybr>
+
+    <footer class="text-center bg-red-800 p-4 text-white">
+        Powered by <a href="https://www.linkedin.com/in/ariel-zappia/" target="_blank" class="hover:underline">Ariel Zappia</a>
+    </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/making-scripts.js') }}"></script>
+</body>
+</html>
