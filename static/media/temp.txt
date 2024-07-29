@@ -1,0 +1,1 @@
+// Thsi txt is here so the media folder is uploaded and doesn't have to be created each time it's used after deploying.
