@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify, send_from_directory, Response
 from pytubefix import YouTube
 import json, os
+import urllib.parse
 
 app = Flask(__name__)
 
@@ -19,6 +20,7 @@ def get_video_data(link):
     channel = yt.author
     channel_url = yt.channel_url
     views = yt.views
+    views = "{:,}".format(views) # Just to make the views more readable.
     length = yt.length
 
     return {'title': title, 'channel': channel, 'channel_url': channel_url, 'thumbnail': thumbnail, 'views': views, 'length': length}
@@ -109,8 +111,23 @@ def download_audio():
     else:
         return jsonify({'error': 'Invalid request method'}), 500
 
+def encode_file_name(file_name):
+    """
+    We need to encode the file_name to be able to download it.
+    To avoid errors we use URL encoding when is not posible to de the latin-1 encoding.
+    """
+    try:
+        file_name.encode('latin-1')
+    except UnicodeEncodeError:
+        # If file_name cannot be encoded in latin-1, use URL encoding
+        return urllib.parse.quote(file_name)
+    return file_name
+
 @app.route('/download/<file_name>', methods=['GET'])
 def download(file_name):
+    """
+    Given the filename we download the file to the user PC and delete it from our media folder.
+    """
     file_path = os.path.join("static/media/", file_name)
 
     def generate():
@@ -118,9 +135,12 @@ def download(file_name):
             yield from file
         os.remove(file_path)
         print(f"Deleted file: {file_path}")
+    
+    encoded_file_name = encode_file_name(file_name)
+    content_disposition = f"attachment; filename={encoded_file_name}"
 
     return Response(generate(), mimetype="audio/mp3", headers={
-        "Content-Disposition": f"attachment; filename={file_name}"
+        "Content-Disposition": content_disposition
     })
 
 @app.errorhandler(404)
