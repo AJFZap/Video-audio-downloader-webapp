@@ -123,9 +123,9 @@ def download(file_name):
         "Content-Disposition": f"attachment; filename={file_name}"
     })
 
-@app.route('/404')
-def missing_page():
-    return render_template("404.html")
+@app.errorhandler(404)
+def missing_page(e):
+    return render_template("404.html"), 404
 
 if __name__ == "__main__":
     app.run(debug=True)
