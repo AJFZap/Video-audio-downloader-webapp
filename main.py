@@ -26,6 +26,9 @@ def get_video_data(link):
     return {'title': title, 'channel': channel, 'channel_url': channel_url, 'thumbnail': thumbnail, 'views': views, 'length': length}
 
 def get_video_file(link):
+    """
+    Download the video file from the given link.
+    """
     yt = YouTube(link)
     audioFile = yt.streams.first()
     outFile = audioFile.download(output_path='static/media')
@@ -36,6 +39,9 @@ def get_video_file(link):
     return newFile
 
 def get_audio_file(link):
+    """
+    Download the audio file from the given link.
+    """
     yt = YouTube(link)
     audioFile = yt.streams.filter(only_audio=True).first()
     outFile = audioFile.download(output_path='static/media')
@@ -47,9 +53,11 @@ def get_audio_file(link):
 
 @app.route('/video', methods=['POST'])
 def download_video():
+    """
+    Gets the data and the video file and returns the name of the downloaded file and the data from the link.
+    """
     if request.method == 'POST':
         try:
-            print(request)
             data = request.get_json()
             videoLink = data.get('link')
 
@@ -80,9 +88,11 @@ def download_video():
 
 @app.route('/audio', methods=['POST'])
 def download_audio():
+    """
+    Gets the data and the audio file and returns the name of the downloaded file and the data from the link.
+    """
     if request.method == 'POST':
         try:
-            print(request)
             data = request.get_json()
             videoLink = data.get('link')
 
@@ -134,7 +144,7 @@ def download(file_name):
         with open(file_path, 'rb') as file:
             yield from file
         os.remove(file_path)
-        print(f"Deleted file: {file_path}")
+        # print(f"Deleted file: {file_path}")
     
     encoded_file_name = encode_file_name(file_name)
     content_disposition = f"attachment; filename={encoded_file_name}"

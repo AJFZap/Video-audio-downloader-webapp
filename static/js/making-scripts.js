@@ -46,7 +46,7 @@ document.getElementById('downloadvideobutton').addEventListener('click', async (
             document.getElementById('video-channel').innerText = data.video_data.channel;
             document.getElementById('video-channel').href = data.video_data.channel_url;
             document.getElementById('video-length').innerText = data.video_data.length + ' Seconds';
-            document.getElementById('video-views').innerText = data.video_data.views + ' Views'; // TODO Make numbers more readable! And improve documentation.
+            document.getElementById('video-views').innerText = data.video_data.views + ' Views';
             document.getElementById('video-data').style.display = 'block';
 
             // Fetch the file and create a Blob URL
