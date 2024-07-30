@@ -143,18 +143,24 @@ def download(file_name):
     temp_dir = tempfile.gettempdir()
     file_path = os.path.join(temp_dir, file_name)
 
-    def generate():
-        with open(file_path, 'rb') as file:
-            yield from file
-        os.remove(file_path)
-        # print(f"Deleted file: {file_path}")
-    
-    encoded_file_name = encode_file_name(file_name)
-    content_disposition = f"attachment; filename={encoded_file_name}"
+    try:
+        def generate():
+            if not os.path.exists(file_path):
+                return jsonify({'error': 'File not found'}), 404
 
-    return Response(generate(), mimetype="audio/mp3", headers={
-        "Content-Disposition": content_disposition
-    })
+            with open(file_path, 'rb') as file:
+                yield from file
+            os.remove(file_path)
+            # print(f"Deleted file: {file_path}")
+        
+        encoded_file_name = encode_file_name(file_name)
+        content_disposition = f"attachment; filename={encoded_file_name}"
+
+        return Response(generate(), mimetype="audio/mp3", headers={
+            "Content-Disposition": content_disposition
+        })
+    except Exception as e:
+        return jsonify({'error': 'Failed to download file'}), 500
 
 @app.errorhandler(404)
 def missing_page(e):
