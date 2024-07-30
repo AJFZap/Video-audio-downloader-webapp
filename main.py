@@ -3,11 +3,11 @@ from threading import Timer
 from pytubefix import YouTube
 import json, os, tempfile
 import urllib.parse
-import logging
+# import logging
 
 app = Flask(__name__, static_url_path='/static')
 
-logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG)
 
 @app.route('/', methods=['GET'])
 def index():
@@ -37,7 +37,7 @@ def get_video_file(link):
     audioFile = yt.streams.first()
     temp_dir = tempfile.gettempdir()
     outFile = audioFile.download(output_path=temp_dir)
-    logging.debug(f"Downloaded audio file to {outFile}")
+    # logging.debug(f"Downloaded audio file to {outFile}")
     # Make the new audio file
     base, ext = os.path.splitext(outFile)
     newFile = base.strip() + '.mp4'
@@ -52,7 +52,7 @@ def get_audio_file(link):
     audioFile = yt.streams.filter(only_audio=True).first()
     temp_dir = tempfile.gettempdir()
     outFile = audioFile.download(output_path=temp_dir)
-    logging.debug(f"Downloaded audio file to {outFile}")
+    # logging.debug(f"Downloaded audio file to {outFile}")
     # Make the new audio file
     base, ext = os.path.splitext(outFile)
     newFile = base.strip() + '.mp3'
@@ -150,7 +150,7 @@ def download(file_name):
     """
     temp_dir = tempfile.gettempdir()
     file_path = os.path.join(temp_dir, file_name)
-    logging.debug(f"Preparing to serve file from {file_path}")
+    # logging.debug(f"Preparing to serve file from {file_path}")
 
     try:
         def generate():
