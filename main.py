@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify, send_from_directory, Response
+from threading import Timer
 from pytubefix import YouTube
 import json, os, tempfile
 import urllib.parse
@@ -150,7 +151,9 @@ def download(file_name):
 
             with open(file_path, 'rb') as file:
                 yield from file
-            os.remove(file_path)
+            
+            # Schedule the file deletion after a short delay to ensure the response is sent
+            Timer(10, lambda: os.remove(file_path)).start()
             # print(f"Deleted file: {file_path}")
         
         encoded_file_name = encode_file_name(file_name)
