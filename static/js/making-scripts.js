@@ -1,4 +1,4 @@
-console.log('1111', 1111);
+// console.log('1111', 1111);
 
 // Function to validate YouTube URLs
 function isValidYouTubeURL(url) {
@@ -38,9 +38,6 @@ document.getElementById('downloadvideobutton').addEventListener('click', async (
                 // If error exists, throw an error
                 throw new Error(data['error']);
             }
-
-            console.log(data);
-            console.log(data.file_name);
 
             // Show the video data
             document.getElementById('video-thumbnail').src = data.video_data.thumbnail;videoLink
