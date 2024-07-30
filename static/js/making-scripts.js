@@ -39,6 +39,9 @@ document.getElementById('downloadvideobutton').addEventListener('click', async (
                 throw new Error(data['error']);
             }
 
+            console.log(data);
+            console.log(data.file_name);
+
             // Show the video data
             document.getElementById('video-thumbnail').src = data.video_data.thumbnail;videoLink
             document.getElementById('video-title').innerText = data.video_data.title;
