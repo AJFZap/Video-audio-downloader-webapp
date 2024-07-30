@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify, send_from_directory, Response
 from pytubefix import YouTube
-import json, os
+import json, os, tempfile
 import urllib.parse
 
 app = Flask(__name__, static_url_path='/static')
@@ -31,7 +31,8 @@ def get_video_file(link):
     """
     yt = YouTube(link)
     audioFile = yt.streams.first()
-    outFile = audioFile.download(output_path='static/media')
+    temp_dir = tempfile.gettempdir()
+    outFile = audioFile.download(output_path=temp_dir)
     # Make the new audio file
     base, ext = os.path.splitext(outFile)
     newFile = base.strip() + '.mp4'
@@ -44,7 +45,8 @@ def get_audio_file(link):
     """
     yt = YouTube(link)
     audioFile = yt.streams.filter(only_audio=True).first()
-    outFile = audioFile.download(output_path='static/media')
+    temp_dir = tempfile.gettempdir()
+    outFile = audioFile.download(output_path=temp_dir)
     # Make the new audio file
     base, ext = os.path.splitext(outFile)
     newFile = base.strip() + '.mp3'
@@ -138,7 +140,8 @@ def download(file_name):
     """
     Given the filename we download the file to the user PC and delete it from our media folder.
     """
-    file_path = os.path.join("static/media/", file_name)
+    temp_dir = tempfile.gettempdir()
+    file_path = os.path.join(temp_dir, file_name)
 
     def generate():
         with open(file_path, 'rb') as file:
