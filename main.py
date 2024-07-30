@@ -7,6 +7,8 @@ import logging
 
 app = Flask(__name__, static_url_path='/static')
 
+logging.basicConfig(level=logging.DEBUG)
+
 @app.route('/', methods=['GET'])
 def index():
     if request.method == 'GET':
@@ -63,31 +65,32 @@ def download_video():
     Gets the data and the video file and returns the name of the downloaded file and the data from the link.
     """
     if request.method == 'POST':
-        try:
-            data = request.get_json()
-            videoLink = data.get('link')
+        with app.app_context():
+            try:
+                data = request.get_json()
+                videoLink = data.get('link')
 
-        except(KeyError, json.JSONDecodeError):
-            return jsonify({'error': 'Invalid data sent'}), 400
-        
-        try:
-            # Gets the video title if it has one.
-            videoData = get_video_data(videoLink)
-            videoFile = get_video_file(videoLink)
+            except(KeyError, json.JSONDecodeError):
+                return jsonify({'error': 'Invalid data sent'}), 400
+            
+            try:
+                # Gets the video title if it has one.
+                videoData = get_video_data(videoLink)
+                videoFile = get_video_file(videoLink)
 
-            # Send the result to JS so the user can see it.
-            file_name = os.path.basename(videoFile)
-            file_path = os.path.join("static/media/", file_name)
+                # Send the result to JS so the user can see it.
+                file_name = os.path.basename(videoFile)
+                file_path = os.path.join("static/media/", file_name)
 
-            response_data = {
-                    'file_name': file_name,
-                    'video_data': videoData
-                }
+                response_data = {
+                        'file_name': file_name,
+                        'video_data': videoData
+                    }
 
-            return jsonify(response_data), 200
-        
-        except Exception as e:
-            return jsonify({'error': str(e)}), 500
+                return jsonify(response_data), 200
+            
+            except Exception as e:
+                return jsonify({'error': str(e)}), 500
 
     else:
         return jsonify({'error': 'Invalid request method'}), 500
@@ -98,31 +101,32 @@ def download_audio():
     Gets the data and the audio file and returns the name of the downloaded file and the data from the link.
     """
     if request.method == 'POST':
-        try:
-            data = request.get_json()
-            videoLink = data.get('link')
+        with app.app_context():
+            try:
+                data = request.get_json()
+                videoLink = data.get('link')
 
-        except(KeyError, json.JSONDecodeError):
-            return jsonify({'error': 'Invalid data sent'}), 400
-        
-        try:
-            # Gets the video title if it has one.
-            videoData = get_video_data(videoLink)
-            audioFile = get_audio_file(videoLink)
+            except(KeyError, json.JSONDecodeError):
+                return jsonify({'error': 'Invalid data sent'}), 400
+            
+            try:
+                # Gets the video title if it has one.
+                videoData = get_video_data(videoLink)
+                audioFile = get_audio_file(videoLink)
 
-            # Send the result to JS so the user can see it.
-            file_name = os.path.basename(audioFile)
-            file_path = os.path.join("static/media/", file_name)
+                # Send the result to JS so the user can see it.
+                file_name = os.path.basename(audioFile)
+                file_path = os.path.join("static/media/", file_name)
 
-            response_data = {
-                    'file_name': file_name,
-                    'video_data': videoData
-                }
+                response_data = {
+                        'file_name': file_name,
+                        'video_data': videoData
+                    }
 
-            return jsonify(response_data), 200
-        
-        except Exception as e:
-            return jsonify({'error': str(e)}), 500
+                return jsonify(response_data), 200
+            
+            except Exception as e:
+                return jsonify({'error': str(e)}), 500
 
     else:
         return jsonify({'error': 'Invalid request method'}), 500
@@ -151,7 +155,8 @@ def download(file_name):
     try:
         def generate():
             if not os.path.exists(file_path):
-                return jsonify({'error': 'File not found'}), 404
+                with app.app_context():
+                    return jsonify({'error': 'File not found'}), 404
 
             with open(file_path, 'rb') as file:
                 yield from file
@@ -167,7 +172,8 @@ def download(file_name):
             "Content-Disposition": content_disposition
         })
     except Exception as e:
-        return jsonify({'error': 'Failed to download file'}), 500
+        with app.app_context():
+            return jsonify({'error': 'Failed to download file'}), 500
 
 @app.errorhandler(404)
 def missing_page(e):
