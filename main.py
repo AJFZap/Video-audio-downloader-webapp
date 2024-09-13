@@ -14,11 +14,10 @@ def index():
     if request.method == 'GET':
         return render_template("index.html")
 
-def get_video_data(link):
+def get_video_data(yt):
     """
     Gets all the needed data from a given valid youtube link if the video exists or it's public.
     """
-    yt = YouTube(link, headers={'User-Agent': 'Mozilla/5.0'})
     title = yt.title
     thumbnail = yt.thumbnail_url
     channel = yt.author
@@ -29,11 +28,10 @@ def get_video_data(link):
 
     return {'title': title, 'channel': channel, 'channel_url': channel_url, 'thumbnail': thumbnail, 'views': views, 'length': length}
 
-def get_video_file(link):
+def get_video_file(yt):
     """
     Download the video file from the given link.
     """
-    yt = YouTube(link, headers={'User-Agent': 'Mozilla/5.0'})
     audioFile = yt.streams.first()
     temp_dir = tempfile.gettempdir()
     outFile = audioFile.download(output_path=temp_dir)
@@ -44,11 +42,10 @@ def get_video_file(link):
     os.rename(outFile, newFile)
     return newFile
 
-def get_audio_file(link):
+def get_audio_file(yt):
     """
     Download the audio file from the given link.
     """
-    yt = YouTube(link, headers={'User-Agent': 'Mozilla/5.0'})
     audioFile = yt.streams.filter(only_audio=True).first()
     temp_dir = tempfile.gettempdir()
     outFile = audioFile.download(output_path=temp_dir)
@@ -69,14 +66,15 @@ def download_video():
             try:
                 data = request.get_json()
                 videoLink = data.get('link')
+                yt = YouTube(videoLink)
 
             except(KeyError, json.JSONDecodeError):
                 return jsonify({'error': 'Invalid data sent'}), 400
             
             try:
                 # Gets the video title if it has one.
-                videoData = get_video_data(videoLink)
-                videoFile = get_video_file(videoLink)
+                videoData = get_video_data(yt)
+                videoFile = get_video_file(yt)
 
                 # Send the result to JS so the user can see it.
                 file_name = os.path.basename(videoFile)
@@ -105,14 +103,15 @@ def download_audio():
             try:
                 data = request.get_json()
                 videoLink = data.get('link')
+                yt = YouTube(videoLink)
 
             except(KeyError, json.JSONDecodeError):
                 return jsonify({'error': 'Invalid data sent'}), 400
             
             try:
                 # Gets the video title if it has one.
-                videoData = get_video_data(videoLink)
-                audioFile = get_audio_file(videoLink)
+                videoData = get_video_data(yt)
+                audioFile = get_audio_file(yt)
 
                 # Send the result to JS so the user can see it.
                 file_name = os.path.basename(audioFile)
