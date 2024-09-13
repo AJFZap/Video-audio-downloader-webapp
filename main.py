@@ -66,7 +66,7 @@ def download_video():
             try:
                 data = request.get_json()
                 videoLink = data.get('link')
-                yt = YouTube(videoLink)
+                yt = YouTube(videoLink, use_po_token=True, token_file="./tokens.json")
 
             except(KeyError, json.JSONDecodeError):
                 return jsonify({'error': 'Invalid data sent'}), 400
@@ -103,7 +103,7 @@ def download_audio():
             try:
                 data = request.get_json()
                 videoLink = data.get('link')
-                yt = YouTube(videoLink)
+                yt = YouTube(videoLink, use_po_token=True, token_file="./tokens.json")
 
             except(KeyError, json.JSONDecodeError):
                 return jsonify({'error': 'Invalid data sent'}), 400
