@@ -18,7 +18,7 @@ def get_video_data(link):
     """
     Gets all the needed data from a given valid youtube link if the video exists or it's public.
     """
-    yt = YouTube(link)
+    yt = YouTube(link, headers={'User-Agent': 'Mozilla/5.0'})
     title = yt.title
     thumbnail = yt.thumbnail_url
     channel = yt.author
@@ -33,7 +33,7 @@ def get_video_file(link):
     """
     Download the video file from the given link.
     """
-    yt = YouTube(link)
+    yt = YouTube(link, headers={'User-Agent': 'Mozilla/5.0'})
     audioFile = yt.streams.first()
     temp_dir = tempfile.gettempdir()
     outFile = audioFile.download(output_path=temp_dir)
@@ -48,7 +48,7 @@ def get_audio_file(link):
     """
     Download the audio file from the given link.
     """
-    yt = YouTube(link)
+    yt = YouTube(link, headers={'User-Agent': 'Mozilla/5.0'})
     audioFile = yt.streams.filter(only_audio=True).first()
     temp_dir = tempfile.gettempdir()
     outFile = audioFile.download(output_path=temp_dir)
